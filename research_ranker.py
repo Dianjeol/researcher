@@ -41,37 +41,11 @@ class ResearchRanker:
         self.searcher = SearchModule()
         self.ranker = SearchRanker()
         
-    def _get_mock_results(self, query: str) -> List[dict]:
-        """Generate mock search results for testing"""
-        return [
-            {
-                'url': 'https://example.com/musikprojekt-berlin',
-                'title': 'Musikprojekt für Geflüchtete Kinder in Berlin',
-                'snippet': 'Ein Berliner Projekt sammelt Musikinstrumente für geflüchtete Kinder und bietet kostenlosen Musikunterricht an. Die Initiative sucht Spender und Sponsoren...',
-                'publication_date': '2025-01-20'
-            },
-            {
-                'url': 'https://example.com/musikschule-berlin',
-                'title': 'Berliner Musikschule unterstützt Flüchtlingskinder',
-                'snippet': 'Die Musikschule Berlin-Mitte stellt Leihinstrumente für Kinder aus Flüchtlingsfamilien zur Verfügung. Erfahrene Musikpädagogen geben Unterricht...',
-                'publication_date': '2025-01-15'
-            },
-            {
-                'url': 'https://example.com/spendenaktion',
-                'title': 'Spendenaktion: Instrumente für Kinder',
-                'snippet': 'Große Spendenaktion in Berlin: Gesucht werden gut erhaltene Musikinstrumente für Kinder aus Flüchtlingsfamilien. Jedes Instrument kann einem Kind neue Perspektiven eröffnen...',
-                'publication_date': '2025-01-10'
-            }
-        ]
         
     async def _perform_search(self, query: str, test_mode: bool = False) -> List[dict]:
         """Perform a single search asynchronously"""
         try:
             logger.info(f"Searching for query: {query}")
-            
-            if test_mode:
-                logger.info("Using mock data (test mode)")
-                return self._get_mock_results(query)
             
             # Using 20 as default per-query limit to get max 120 results (6 queries * 20)
             results = self.searcher.search(query, num_results=20)

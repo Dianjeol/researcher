@@ -101,102 +101,6 @@ class Researcher:
             # Return empty list on error
             return []
 
-    def _get_mock_scraped_content(self, url: str) -> ScrapedContent:
-        """Get mock scraped content for testing"""
-        mock_data = {
-            'https://example.com/musikprojekt-berlin': {
-                'title': 'Musikprojekt für Geflüchtete Kinder in Berlin',
-                'text': """
-                Das Berliner Musikprojekt für geflüchtete Kinder ist eine Initiative, die seit 2024 aktiv ist.
-                Wir sammeln Musikinstrumente und bieten kostenlosen Musikunterricht für Kinder aus Flüchtlingsfamilien an.
-                
-                Was wir bieten:
-                - Kostenloser Musikunterricht
-                - Leihinstrumente für die Dauer des Unterrichts
-                - Regelmäßige Konzerte und Aufführungen
-                - Workshops und Gruppenunterricht
-                
-                Wie Sie helfen können:
-                - Spenden Sie gut erhaltene Musikinstrumente
-                - Werden Sie Musikpate und unterstützen Sie ein Kind
-                - Engagieren Sie sich als ehrenamtlicher Musiklehrer
-                
-                Kontakt:
-                Tel: 030-1234567
-                Email: info@musikprojekt-berlin.de
-                """,
-                'links': [
-                    {'text': 'Instrumente spenden', 'url': 'https://example.com/musikprojekt-berlin/spenden'},
-                    {'text': 'Musikpate werden', 'url': 'https://example.com/musikprojekt-berlin/paten'}
-                ]
-            },
-            'https://example.com/musikschule-berlin': {
-                'title': 'Berliner Musikschule unterstützt Flüchtlingskinder',
-                'text': """
-                Die Musikschule Berlin-Mitte erweitert ihr Programm für Kinder aus Flüchtlingsfamilien.
-                
-                Unser Angebot:
-                - Instrumentalunterricht in kleinen Gruppen
-                - Kostenlose Leihinstrumente
-                - Qualifizierte Musikpädagogen
-                - Flexible Unterrichtszeiten
-                
-                Verfügbare Instrumente:
-                - Gitarren (akustisch und elektrisch)
-                - Keyboards und Klaviere
-                - Violinen und Bratschen
-                - Flöten und Klarinetten
-                - Percussion und Schlagzeug
-                
-                Standorte:
-                - Hauptstandort: Musterstraße 1, 10115 Berlin
-                - Zweigstelle Wedding: Beispielweg 2, 13353 Berlin
-                """,
-                'links': [
-                    {'text': 'Anmeldung', 'url': 'https://example.com/musikschule-berlin/anmeldung'},
-                    {'text': 'Standorte', 'url': 'https://example.com/musikschule-berlin/standorte'}
-                ]
-            },
-            'https://example.com/spendenaktion': {
-                'title': 'Spendenaktion: Instrumente für Kinder',
-                'text': """
-                Große Spendenaktion für Musikinstrumente in Berlin
-                
-                Gesucht werden:
-                - Streichinstrumente (Geigen, Bratschen, Celli)
-                - Blasinstrumente (Flöten, Klarinetten, Saxophone)
-                - Gitarren und Ukulelen
-                - Keyboards und digitale Pianos
-                - Percussion und Rhythmusinstrumente
-                
-                Ihre Spende hilft:
-                - Kindern den Zugang zu Musik zu ermöglichen
-                - Musikalische Bildung zu fördern
-                - Integration durch Musik zu unterstützen
-                - Gemeinschaft und Kreativität zu stärken
-                
-                Spendenannahme:
-                Montag bis Freitag, 10-18 Uhr
-                Samstag, 10-14 Uhr
-                """,
-                'links': [
-                    {'text': 'Spendenformular', 'url': 'https://example.com/spendenaktion/formular'},
-                    {'text': 'Abholservice', 'url': 'https://example.com/spendenaktion/abholung'}
-                ]
-            }
-        }
-        
-        content = mock_data.get(url, {
-            'title': 'Page not found',
-            'text': 'This is a mock page that does not exist.',
-            'links': []
-        })
-        
-        return ScrapedContent(
-            text=content['text'],
-            links=content['links'],
-            title=content['title']
-        )
 
     def research(self, request: ResearcherRequest) -> ResearcherResults:
         """
@@ -213,31 +117,14 @@ class Researcher:
             # Step 2: Get ranked search results
             logger.info("Getting ranked search results")
             
-            # Create mock search results for testing
-            mock_results = [
-                {
-                    'url': 'https://example.com/musikprojekt-berlin',
-                    'title': 'Musikprojekt für Geflüchtete Kinder in Berlin',
-                    'snippet': 'Ein Berliner Projekt sammelt Musikinstrumente für geflüchtete Kinder und bietet kostenlosen Musikunterricht an. Die Initiative sucht Spender und Sponsoren...',
-                    'publication_date': '2025-01-20'
-                },
-                {
-                    'url': 'https://example.com/musikschule-berlin',
-                    'title': 'Berliner Musikschule unterstützt Flüchtlingskinder',
-                    'snippet': 'Die Musikschule Berlin-Mitte stellt Leihinstrumente für Kinder aus Flüchtlingsfamilien zur Verfügung. Erfahrene Musikpädagogen geben Unterricht...',
-                    'publication_date': '2025-01-15'
-                },
-                {
-                    'url': 'https://example.com/spendenaktion',
-                    'title': 'Spendenaktion: Instrumente für Kinder',
-                    'snippet': 'Große Spendenaktion in Berlin: Gesucht werden gut erhaltene Musikinstrumente für Kinder aus Flüchtlingsfamilien. Jedes Instrument kann einem Kind neue Perspektiven eröffnen...',
-                    'publication_date': '2025-01-10'
-                }
-            ]
+            research_ranker = ResearchRanker()
+            research_request = ResearchRequest(
+                research_query=request.research_query,
+                search_queries=search_queries
+            )
+            research_results = research_ranker.research(research_request)
             
-            ranked_results = self.ranker.rank_results(mock_results, request.research_query)
-            
-            if not (ranked_results.very_relevant or ranked_results.relevant):
+            if not research_results.ranked_results:
                 return ResearcherResults(
                     search_results=[],
                     analyzed_results=[],
@@ -245,14 +132,8 @@ class Researcher:
                     queries_used=search_queries,
                     error="No relevant search results found"
                 )
-
-            # Combine all results in order of relevance
-            all_results = (
-                ranked_results.very_relevant +
-                ranked_results.relevant +
-                ranked_results.somewhat_relevant +
-                ranked_results.not_relevant
-            )
+            
+            all_results = research_results.ranked_results
 
             # Step 3: Select URLs to analyze
             urls_to_analyze = self._select_urls_to_analyze(
@@ -265,8 +146,7 @@ class Researcher:
             analyzed_results = []
             for url in urls_to_analyze:
                 try:
-                    # Use mock data for testing
-                    scraped_content = self._get_mock_scraped_content(url)
+                    scraped_content = self.scraper.scrape(url)
                     if not scraped_content.error:
                         # Analyze content
                         analysis = self.analyzer.analyze_content(

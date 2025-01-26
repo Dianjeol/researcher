@@ -8,8 +8,8 @@ load_dotenv()
 
 class SearchModule:
     def __init__(self):
-        self.google_api_key = os.getenv('GOOGLE_API_KEY')
-        self.search_engine_id = os.getenv('SEARCH_ENGINE_ID')
+        self.google_api_key = "AIzaSyCuY7L8wBdcCWxCcudUsu2CZASiLAwJMu4"
+        self.search_engine_id = "65125b91038fc44d8"
         
         # Initialize Google Search API
         self.google_service = build(
@@ -17,15 +17,15 @@ class SearchModule:
             developerKey=self.google_api_key
         )
 
-    def search(self, query: str, num_results: int = 20) -> List[Dict]:
+    def search(self, query: str, num_results: int = 10) -> List[Dict]:
         """
         Perform a Google search using Custom Search API
-        Returns up to 20 results
+        Returns up to 10 results
         """
         try:
             results = []
             # Google Custom Search API can only return max 10 results per request
-            for i in range(0, min(num_results, 20), 10):
+            for i in range(0, min(num_results, 10), 10):
                 response = self.google_service.cse().list(
                     q=query,
                     cx=self.search_engine_id,
