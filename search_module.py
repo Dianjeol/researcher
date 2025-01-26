@@ -8,8 +8,8 @@ load_dotenv()
 
 class SearchModule:
     def __init__(self):
-        self.google_api_key = "AIzaSyCuY7L8wBdcCWxCcudUsu2CZASiLAwJMu4"
-        self.search_engine_id = "65125b91038fc44d8"
+        self.google_api_key = ".env"
+        self.search_engine_id = ".env"
         
         # Initialize Google Search API
         self.google_service = build(
