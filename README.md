@@ -4,11 +4,13 @@ A powerful research assistant that helps gather, analyze, and summarize informat
 
 ## Features ✨
 
-- **Intelligent Query Generation**: Automatically generates relevant search queries based on your research objective
-- **Smart Result Ranking**: Ranks search results by relevance to your research goals
-- **Deep Content Analysis**: Analyzes webpage content to extract key information
+- **Intelligent Query Generation**: Automatically generates focused search queries based on your research objective
+- **Smart Result Ranking**: Ranks search results by relevance using an advanced website ranker
+- **Deep Content Analysis**: Analyzes webpage content to extract key information and assess relevance
 - **Comprehensive Summaries**: Provides detailed summaries and actionable next steps
 - **Multi-language Support**: Currently optimized for English and German
+- **Efficient URL Selection**: Intelligently selects the most relevant URLs for detailed analysis
+- **Integrated Website Ranking**: Ranks analyzed websites based on their importance to your research query
 
 ## Installation 🚀
 
@@ -33,6 +35,7 @@ pip install -r requirements.txt
 ```bash
 GOOGLE_SEARCH_API_KEY=your_api_key
 GOOGLE_SEARCH_CX=your_cx_id
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
 ## Usage 💡
@@ -57,10 +60,11 @@ print("\nQUERIES USED:")
 for query in results.queries_used:
     print(f"- {query}")
 
-print("\nTOP SEARCH RESULTS:")
-for result in results.search_results[:5]:
+print("\nTOP RANKED RESULTS:")
+for result in results.ranked_results[:5]:
     print(f"\n{result.title}")
     print(f"URL: {result.url}")
+    print(f"Relevance: {result.relevance}")
     print(f"Snippet: {result.snippet[:200]}...")
 
 print("\nDETAILED ANALYSES:")
@@ -68,7 +72,7 @@ for analysis in results.analyzed_results:
     print(f"\nANALYSIS:")
     print(f"Title: {analysis.title}")
     print(f"Summary: {analysis.summary}")
-    print(f"Relevance: {analysis.relevance}")
+    print(f"Importance: {analysis.importance}")
     print(f"Next Actions:")
     for action in analysis.next_actions:
         print(f"- {action}")
@@ -79,7 +83,8 @@ for analysis in results.analyzed_results:
 The system consists of several key modules:
 
 - **ResearcherModule**: Main orchestrator that coordinates the research process
-- **SearchRanker**: Ranks search results based on relevance to the research objective
+- **WebsiteRanker**: Ranks websites based on their importance to the research query
+- **SearchRanker**: Ranks initial search results based on relevance
 - **ScraperModule**: Extracts content from web pages
 - **AnalyzerModule**: Analyzes and summarizes webpage content
 - **LLMModule**: Handles interactions with language models for various tasks
@@ -100,8 +105,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments 🙏
 
-- Thanks to the Codeium team for their excellent LLM tools
-- Thanks to all contributors who have helped shape this project
+- Thanks to Google for providing the Search and Gemini APIs
+- Thanks to all contributors who have helped improve this project
 
 ## Contact 📧
 
